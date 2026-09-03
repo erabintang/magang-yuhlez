@@ -1,0 +1,513 @@
+@import 'tailwindcss';
+@import 'trix/dist/trix.css';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --color-yuhlez-primary: #2563eb;
+    --color-yuhlez-secondary: #1d4ed8;
+    --color-yuhlez-light: #dbeafe;
+    --color-yuhlez-accent: #f59e0b;
+    --color-yuhlez-dark: #1e293b;
+}
+
+/* ── Trix Editor Overrides ───────────────────────────────── */
+/* Match YUHLEZ design: rounded corners, zinc borders, yellow accent */
+
+.trix-button {
+    border-radius: 0.375rem !important;
+    border: none !important;
+    color: #3f3f46 !important;
+    padding: 0.375rem 0.5rem !important;
+    margin: 0 0.125rem !important;
+    transition: all 0.15s ease !important;
+    font-size: 0.875rem !important;
+    line-height: 1 !important;
+}
+
+.trix-button:hover {
+    background-color: #e4e4e7 !important;
+    color: #18181b !important;
+}
+
+.trix-button.trix-active {
+    background-color: #fef3c7 !important;
+    color: #92400e !important;
+}
+
+.trix-button-group {
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+}
+
+.trix-button-group:not(:last-child) {
+    border-right: 1px solid #d4d4d8 !important;
+    margin-right: 0.25rem !important;
+    padding-right: 0.25rem !important;
+}
+
+.trix-toolbar {
+    border: 1px solid #d4d4d8 !important;
+    border-bottom: none !important;
+    border-radius: 0.75rem 0.75rem 0 0 !important;
+    background-color: #fafafa !important;
+    padding: 0.5rem !important;
+}
+
+.trix-content {
+    border: none !important;
+    padding: 0 !important;
+    font-size: 0.875rem !important;
+    line-height: 1.625 !important;
+}
+
+.trix-content h1 {
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.5rem !important;
+    color: #18181b !important;
+}
+
+.trix-content h2 {
+    font-size: 1.25rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.375rem !important;
+    color: #18181b !important;
+}
+
+.trix-content h3 {
+    font-size: 1.125rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.25rem !important;
+    color: #27272a !important;
+}
+
+.trix-content p {
+    margin-bottom: 0.5rem !important;
+    color: #3f3f46 !important;
+}
+
+.trix-content ul, .trix-content ol {
+    padding-left: 1.5rem !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.trix-content li {
+    margin-bottom: 0.125rem !important;
+    color: #3f3f46 !important;
+}
+
+.trix-content blockquote {
+    border-left: 3px solid #f59e0b !important;
+    padding-left: 1rem !important;
+    margin-left: 0 !important;
+    color: #52525b !important;
+    font-style: italic !important;
+}
+
+.trix-content code {
+    background-color: #f4f4f5 !important;
+    border-radius: 0.25rem !important;
+    padding: 0.125rem 0.375rem !important;
+    font-size: 0.8125rem !important;
+    font-family: 'Courier New', monospace !important;
+}
+
+.trix-content pre {
+    background-color: #18181b !important;
+    color: #e4e4e7 !important;
+    border-radius: 0.5rem !important;
+    padding: 1rem !important;
+    overflow-x: auto !important;
+    font-size: 0.8125rem !important;
+}
+
+.trix-content a {
+    color: #2563eb !important;
+    text-decoration: underline !important;
+}
+
+/* Placeholder when empty */
+trix-editor[placeholder]:not(:focus)::before {
+    content: attr(placeholder);
+    color: #a1a1aa;
+    font-size: 0.875rem;
+    pointer-events: none;
+    position: absolute;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TEAM CARD - Simple static cards
+   ═══════════════════════════════════════════════════════════ */
+
+
+
+/* ── Floating particles effect ──────────────────────── */
+
+.hero-particles {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.hero-particles .particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #eab308;
+    border-radius: 50%;
+    opacity: 0;
+    animation: float 6s ease-in-out infinite;
+}
+
+.hero-particles .particle:nth-child(1) { left: 10%; animation-delay: 0s; animation-duration: 7s; }
+.hero-particles .particle:nth-child(2) { left: 25%; animation-delay: 1s; animation-duration: 5s; }
+.hero-particles .particle:nth-child(3) { left: 40%; animation-delay: 2s; animation-duration: 8s; }
+.hero-particles .particle:nth-child(4) { left: 55%; animation-delay: 0.5s; animation-duration: 6s; }
+.hero-particles .particle:nth-child(5) { left: 70%; animation-delay: 1.5s; animation-duration: 7s; }
+.hero-particles .particle:nth-child(6) { left: 85%; animation-delay: 3s; animation-duration: 5s; }
+.hero-particles .particle:nth-child(7) { left: 15%; animation-delay: 2.5s; animation-duration: 9s; }
+.hero-particles .particle:nth-child(8) { left: 60%; animation-delay: 0.8s; animation-duration: 6s; }
+
+@keyframes float {
+    0% { transform: translateY(100vh) scale(0); opacity: 0; }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.6; }
+    100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+}
+
+/* ── Gradient mesh background ───────────────────────── */
+
+.gradient-mesh {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(at 20% 80%, rgba(234, 179, 8, 0.08) 0%, transparent 50%),
+        radial-gradient(at 80% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
+        radial-gradient(at 50% 50%, rgba(234, 179, 8, 0.03) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+/* ── Section divider wave ───────────────────────────── */
+
+.wave-divider {
+    position: relative;
+    height: 60px;
+    margin-top: -60px;
+    pointer-events: none;
+}
+
+.wave-divider svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* ── Animated gradient text ─────────────────────────── */
+
+.gradient-text {
+    background: linear-gradient(135deg, #eab308, #f59e0b, #eab308);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientShift 4s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+/* ── Glow button effect ─────────────────────────────── */
+
+.glow-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.glow-btn::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #eab308, #f59e0b, #eab308, #fbbf24);
+    background-size: 400%;
+    border-radius: inherit;
+    z-index: -1;
+    animation: glowBorder 3s linear infinite;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.glow-btn:hover::before {
+    opacity: 1;
+}
+
+@keyframes glowBorder {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* ── Scroll reveal animation ────────────────────────── */
+
+.reveal {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.reveal.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ── Card tilt effect on hover ──────────────────────── */
+
+.tilt-card {
+    transition: transform 0.3s ease;
+}
+
+.tilt-card:hover {
+    transform: translateY(-4px);
+}
+
+/* ── Service card shimmer ───────────────────────────── */
+
+.service-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.service-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(234, 179, 8, 0.05),
+        transparent
+    );
+    transition: left 0.6s ease;
+}
+
+.service-card:hover::before {
+    left: 100%;
+}
+
+/* ── Stats counter animation ────────────────────────── */
+
+.stat-number {
+    font-variant-numeric: tabular-nums;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   LANDING PAGE ANIMATIONS - Premium Quality
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Smooth section entrance ────────────────────────── */
+
+section {
+    position: relative;
+}
+
+/* ── Hero text animation ────────────────────────────── */
+
+.hero-title {
+    animation: heroSlideUp 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+.hero-subtitle {
+    animation: heroSlideUp 1s cubic-bezier(0.4, 0, 0.2, 1) 0.15s forwards;
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+.hero-desc {
+    animation: heroSlideUp 1s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards;
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+.hero-cta {
+    animation: heroSlideUp 1s cubic-bezier(0.4, 0, 0.2, 1) 0.45s forwards;
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+.hero-card {
+    animation: heroCardIn 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards;
+    opacity: 0;
+    transform: translateX(40px) scale(0.95);
+}
+
+@keyframes heroSlideUp {
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes heroCardIn {
+    to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+/* ── Floating card shadow pulse ─────────────────────── */
+
+.hero-card {
+    animation: heroCardIn 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards,
+               cardShadowPulse 4s ease-in-out 1.5s infinite;
+    opacity: 0;
+}
+
+@keyframes cardShadowPulse {
+    0%, 100% { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 10px 25px -5px rgba(0,0,0,0.1); }
+    50% { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 20px 40px -5px rgba(234, 179, 8, 0.08); }
+}
+
+/* ── Section hover glow ─────────────────────────────── */
+
+.glow-section {
+    position: relative;
+}
+
+.glow-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(234, 179, 8, 0.3), transparent);
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+
+.glow-section:hover::before {
+    opacity: 1;
+}
+
+/* ── Magnetic button effect ─────────────────────────── */
+
+.magnetic-btn {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.magnetic-btn:hover {
+    transform: translateY(-2px) scale(1.02);
+}
+
+.magnetic-btn:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* ── Staggered grid reveal ──────────────────────────── */
+
+.stagger-grid > * {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stagger-grid.revealed > *:nth-child(1) { transition-delay: 0.05s; opacity: 1; transform: translateY(0); }
+.stagger-grid.revealed > *:nth-child(2) { transition-delay: 0.1s; opacity: 1; transform: translateY(0); }
+.stagger-grid.revealed > *:nth-child(3) { transition-delay: 0.15s; opacity: 1; transform: translateY(0); }
+.stagger-grid.revealed > *:nth-child(4) { transition-delay: 0.2s; opacity: 1; transform: translateY(0); }
+.stagger-grid.revealed > *:nth-child(5) { transition-delay: 0.25s; opacity: 1; transform: translateY(0); }
+.stagger-grid.revealed > *:nth-child(6) { transition-delay: 0.3s; opacity: 1; transform: translateY(0); }
+.stagger-grid.revealed > *:nth-child(7) { transition-delay: 0.35s; opacity: 1; transform: translateY(0); }
+.stagger-grid.revealed > *:nth-child(8) { transition-delay: 0.4s; opacity: 1; transform: translateY(0); }
+
+/* ── Smooth number counter ──────────────────────────── */
+
+.count-up {
+    display: inline-block;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Parallax-like depth ────────────────────────────── */
+
+.depth-layer {
+    transform: translateZ(0);
+    will-change: transform;
+}
+
+/* ── Premium divider lines ──────────────────────────── */
+
+.section-divider {
+    position: relative;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, #e4e4e7 20%, #e4e4e7 80%, transparent 100%);
+    margin: 0 auto;
+    max-width: 80%;
+}
+
+.section-divider::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8px;
+    height: 8px;
+    background: #eab308;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(234, 179, 8, 0.4);
+}
+
+/* ── Text highlight animation ───────────────────────── */
+
+.highlight-underline {
+    position: relative;
+    display: inline-block;
+}
+
+.highlight-underline::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: #eab308;
+    border-radius: 2px;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.highlight-underline:hover::after,
+.revealed .highlight-underline::after {
+    width: 100%;
+}
+
+/* ── Card hover lift with glow ──────────────────────── */
+
+.hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-6px);
+    box-shadow:
+        0 20px 40px -12px rgba(0, 0, 0, 0.15),
+        0 0 20px rgba(234, 179, 8, 0.05);
+}
+
+
