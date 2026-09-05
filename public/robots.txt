@@ -1,0 +1,26 @@
+# YUHLEZ - robots.txt
+# https://magang-dev.keloladata.cloud
+
+User-agent: *
+Allow: /
+Allow: /magang
+Allow: /magang/*
+Allow: /perusahaan
+Allow: /perusahaan/*
+Allow: /karya
+Allow: /karya/*
+Allow: /intern/*
+
+Disallow: /dashboard/
+Disallow: /dashboard/*
+Disallow: /login
+Disallow: /register
+Disallow: /register/*
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /logout
+Disallow: /v1/
+Disallow: /files/
+Disallow: /storage/
+
+Sitemap: https://magang-dev.keloladata.cloud/sitemap.xml
