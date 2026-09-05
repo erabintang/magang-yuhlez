@@ -6,7 +6,8 @@
     <title>403 - Akses Ditolak | YUHLEZ</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:400,600,700,800" rel="stylesheet" />
-    @vite(['resources/css/app.css'])
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
 <body class="min-h-screen bg-zinc-50 flex items-center justify-center font-sans antialiased">
     <div class="text-center px-6">

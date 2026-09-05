@@ -1,32 +1,27 @@
-import './bootstrap';
-import 'trix';
-import Chart from 'chart.js/auto';
+/**
+ * YUHLEZ App JS — Pure Blade, no Vite needed.
+ * Uses CDN globals: axios, Trix, Chart
+ */
 
-// Make Chart.js available globally for dashboard charts
-window.Chart = Chart;
+// ── Axios Setup ─────────────────────────────────────────
+if (typeof axios !== 'undefined') {
+    window.axios = axios;
+    window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+}
 
-// ── Trix Configuration ───────────────────────────────────
-// Disable file attachment feature (we handle uploads separately)
-Trix.config.attachments.caption.enabled = false;
+// ── Trix Configuration ──────────────────────────────────
+if (typeof Trix !== 'undefined') {
+    Trix.config.attachments.caption.enabled = false;
 
-// Set locale to Indonesian
-Trix.config.lang = {
-    text: 'Teks',
-    bold: 'Tebal',
-    italic: 'Miring',
-    underline: 'Garis bawah',
-    strike: 'Coret',
-    href: 'Tautan',
-    heading1: 'Judul Besar',
-    bullet_list: 'Daftar',
-    numbering_list: 'Daftar Berurut',
-    quote: 'Kutipan',
-    code: 'Kode',
-    decreaseIndent: 'Kurangi Indentasi',
-    increaseIndent: 'Tambah Indentasi',
-    undo: 'Urungkan',
-    redo: 'Ulangi',
-};
+    Trix.config.lang = {
+        text: 'Teks', bold: 'Tebal', italic: 'Miring',
+        underline: 'Garis bawah', strike: 'Coret', href: 'Tautan',
+        heading1: 'Judul Besar', bullet_list: 'Daftar',
+        numbering_list: 'Daftar Berurut', quote: 'Kutipan',
+        code: 'Kode', decreaseIndent: 'Kurangi Indentasi',
+        increaseIndent: 'Tambah Indentasi', undo: 'Urungkan', redo: 'Ulangi',
+    };
+}
 
 // ── Scroll Reveal Animation ──────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
@@ -69,14 +64,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.addEventListener('scroll', () => {
         const scrollY = window.scrollY;
-        if (scrollY > 600) return; // Only in hero area
+        if (scrollY > 600) return;
 
         const particles = heroSection.querySelectorAll('.particle');
         particles.forEach((p, i) => {
             p.style.transform = `translateY(${100 - scrollY * (0.3 + i * 0.05)}vh) scale(${0.5 + scrollY * 0.001})`;
         });
 
-        const heroCard = heroSection.querySelector('.hidden.lg\:block');
+        const heroCard = heroSection.querySelector('.hidden.lg\\:block');
         if (heroCard) {
             heroCard.style.transform = `translateY(${scrollY * 0.08}px)`;
         }
@@ -127,8 +122,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ── Auto-init WYSIWYG Trix for data-wysiwyg elements ────
-// Replaces the old custom wysiwyg.js with Trix
 document.addEventListener('DOMContentLoaded', () => {
+    if (typeof Trix === 'undefined') return;
+
     document.querySelectorAll('[data-wysiwyg]').forEach(el => {
         const hiddenInput = document.getElementById(el.dataset.wysiwyg);
         if (!hiddenInput) return;
@@ -166,4 +162,3 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
-

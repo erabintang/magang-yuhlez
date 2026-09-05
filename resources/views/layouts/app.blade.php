@@ -12,7 +12,12 @@
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700,800" rel="stylesheet" />
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    {{-- Tailwind CSS v4 (CDN) --}}
+    <script src="https://cdn.tailwindcss.com"></script>
+    {{-- Trix Editor CSS --}}
+    <link rel="stylesheet" href="https://unpkg.com/trix@2.1.19/dist/trix.min.css">
+    {{-- Custom CSS --}}
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     @yield('styles')
 </head>
 <body class="min-h-screen bg-white font-sans antialiased">
@@ -122,6 +127,14 @@
     </footer>
 
     @yield('scripts')
+    {{-- Trix Editor JS --}}
+    <script src="https://unpkg.com/trix@2.1.19/dist/trix.min.js"></script>
+    {{-- Chart.js --}}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+    {{-- Axios --}}
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.11.0/dist/axios.min.js"></script>
+    {{-- App JS --}}
+    <script src="{{ asset('js/app.js') }}"></script>
     <script>
     (function() {
         const toggle = document.getElementById('darkToggle');

@@ -1,25 +1,8 @@
-@import 'tailwindcss';
-@import 'trix/dist/trix.css';
-
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
-
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
-
-    --color-yuhlez-primary: #2563eb;
-    --color-yuhlez-secondary: #1d4ed8;
-    --color-yuhlez-light: #dbeafe;
-    --color-yuhlez-accent: #f59e0b;
-    --color-yuhlez-dark: #1e293b;
-}
+/* ═══════════════════════════════════════════════════════════
+   YUHLEZ Custom CSS — Pure Blade, no Vite needed
+   ═══════════════════════════════════════════════════════════ */
 
 /* ── Trix Editor Overrides ───────────────────────────────── */
-/* Match YUHLEZ design: rounded corners, zinc borders, yellow accent */
-
 .trix-button {
     border-radius: 0.375rem !important;
     border: none !important;
@@ -142,12 +125,6 @@ trix-editor[placeholder]:not(:focus)::before {
     pointer-events: none;
     position: absolute;
 }
-
-/* ═══════════════════════════════════════════════════════════
-   TEAM CARD - Simple static cards
-   ═══════════════════════════════════════════════════════════ */
-
-
 
 /* ── Floating particles effect ──────────────────────── */
 
@@ -323,8 +300,6 @@ trix-editor[placeholder]:not(:focus)::before {
    LANDING PAGE ANIMATIONS - Premium Quality
    ═══════════════════════════════════════════════════════════ */
 
-/* ── Smooth section entrance ────────────────────────── */
-
 section {
     position: relative;
 }
@@ -356,7 +331,8 @@ section {
 }
 
 .hero-card {
-    animation: heroCardIn 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards;
+    animation: heroCardIn 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards,
+               cardShadowPulse 4s ease-in-out 1.5s infinite;
     opacity: 0;
     transform: translateX(40px) scale(0.95);
 }
@@ -367,14 +343,6 @@ section {
 
 @keyframes heroCardIn {
     to { opacity: 1; transform: translateX(0) scale(1); }
-}
-
-/* ── Floating card shadow pulse ─────────────────────── */
-
-.hero-card {
-    animation: heroCardIn 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards,
-               cardShadowPulse 4s ease-in-out 1.5s infinite;
-    opacity: 0;
 }
 
 @keyframes cardShadowPulse {
@@ -509,5 +477,3 @@ section {
         0 20px 40px -12px rgba(0, 0, 0, 0.15),
         0 0 20px rgba(234, 179, 8, 0.05);
 }
-
-

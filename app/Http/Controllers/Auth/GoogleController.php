@@ -78,7 +78,7 @@ class GoogleController extends Controller
 
         $email = strtolower(trim($googleUser->getEmail()));
         $name = $googleUser->getName() ?? $email;
-        $intent = session('google_oauth_intent') ?? 'intern';
+        $intent = session('google_oauth_intent');
 
         if (empty($email)) {
             return redirect()->route('login')

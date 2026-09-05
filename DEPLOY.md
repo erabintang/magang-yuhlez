@@ -1,345 +1,149 @@
-# 🚀 YUHLEZ - Deployment Guide
+# Deploy YUHLEZ (Tanpa npm)
 
-Platform manajemen magang YUHLEZ - Laravel 12
-
----
-
-## 📋 Table of Contents
-
-1. [Local Development](#local-development)
-2. [VPS Production](#vps-production)
-3. [Default Accounts](#default-accounts)
-4. [Architecture](#architecture)
-5. [Troubleshooting](#troubleshooting)
-6. [Backup](#backup)
-
----
-
-## 🖥️ Local Development
-
-### Prerequisites
-
-- PHP 8.2+ (atau gunakan Docker)
+## Prasyarat Server
+- PHP 8.2+
 - Composer
-- Node.js 18+
-- MySQL/MariaDB (atau gunakan Docker)
+- MySQL/PostgreSQL
+- Apache2 atau Nginx
 
-### Cara Cepat (Tanpa Docker)
+## Langkah Deploy
 
 ```bash
-# 1. Install dependencies
-composer install
-npm install
+# 1. Clone project
+cd /var/www/
+git clone <repo-url> yuhlez
+cd yuhlez
 
-# 2. Setup database (pastikan MySQL sudah jalan)
+# 2. Install PHP dependencies
+composer install --no-dev --optimize-autoloader
+
+# 3. Setup environment
 cp .env.example .env
 php artisan key:generate
 
-# 3. Edit .env - isi DB credentials local Anda
-# DB_HOST=127.0.0.1
-# DB_DATABASE=yuhlez
-# DB_USERNAME=root
-# DB_PASSWORD=
-
-# 4. Jalankan migrasi + seed
-php artisan migrate --seed
-
-# 5. Build assets + jalankan dev server
-npm run dev        # terminal 1 (Vite HMR)
-php artisan serve  # terminal 2 (http://127.0.0.1:8000)
+# 4. Edit .env — isi database credentials
+nano .env
 ```
 
-### Cara dengan Docker (MySQL saja)
+Edit bagian ini di `.env`:
+```
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=yuhlez
+DB_USERNAME=root
+DB_PASSWORD=your_password
+
+APP_URL=https://yourdomain.com
+APP_ENV=production
+APP_DEBUG=false
+```
 
 ```bash
-# 1. Jalankan MySQL via Docker
-docker compose up -d mysql
+# 5. Jalankan migrasi
+php artisan migrate --force
 
-# 2. Setup Laravel
-composer install
-cp .env.example .env
-php artisan key:generate
-php artisan migrate --seed
-npm install && npm run build
+# 6. Set permissions
+chown -R www-data:www-data /var/www/yuhlez
+chmod -R 755 /var/www/yuhlez/storage
+chmod -R 755 /var/www/yuhlez/bootstrap/cache
 
-# 3. Jalankan dev server
-php artisan serve
+# 7. Cache optimize
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+
+# 8. Buat storage link
+php artisan storage:link
 ```
 
-### Cara Full Stack Docker
+## Konfigurasi Apache
+
+Buat file `/etc/apache2/sites-available/yuhlez.conf`:
+
+```apache
+<VirtualHost *:80>
+    ServerName yourdomain.com
+    DocumentRoot /var/www/yuhlez/public
+
+    <Directory /var/www/yuhlez/public>
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/yuhlez-error.log
+    CustomLog ${APACHE_LOG_DIR}/yuhlez-access.log combined
+</VirtualHost>
+```
 
 ```bash
-# Jalankan semua service (MySQL + App + Nginx + Queue)
-docker compose --profile full up -d --build
-
-# Akses: http://localhost:8080
-# Stop: docker compose --profile full down
+# Aktifkan site
+sudo a2ensite yuhlez.conf
+sudo a2dissite 000-default.conf
+sudo systemctl restart apache2
 ```
 
-### Setup Google OAuth (untuk login Google)
+## Konfigurasi Nginx
 
-1. Buka https://console.cloud.google.com
-2. Buat Project baru
-3. **APIs & Services → Credentials → Create OAuth 2.0 Client ID**
-4. Application type: **Web Application**
-5. Authorized redirect URIs:
-   ```
-   http://127.0.0.1:8000/v1/auth/google/callback
-   ```
-6. Copy Client ID dan Client Secret ke `.env`:
-   ```
-   GOOGLE_CLIENT_ID=xxxxx
-   GOOGLE_CLIENT_SECRET=xxxxx
-   ```
+Buat file `/etc/nginx/sites-available/yuhlez`:
 
----
+```nginx
+server {
+    listen 80;
+    server_name yourdomain.com;
+    root /var/www/yuhlez/public;
 
-## 🌐 VPS Production
+    index index.php;
 
-### Prerequisites
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
 
-- VPS Ubuntu 22.04/24.04 (min. 2GB RAM, 1 vCPU)
-- Domain pointed ke IP VPS
-- Docker & Docker Compose terinstall
-- Port 80 & 443 terbuka
+    location ~ \.php$ {
+        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
 
-### Step 1: Install Docker di VPS
+    location ~ /\.(?!well-known).* {
+        deny all;
+    }
+}
+```
 
 ```bash
-# Install Docker
-curl -fsSL https://get.docker.com -o get-docker.sh
-sh get-docker.sh
-
-# Install Docker Compose plugin
-apt install docker-compose-plugin -y
-
-# Verifikasi
-docker --version
-docker compose version
+# Aktifkan site
+sudo ln -s /etc/nginx/sites-available/yuhlez /etc/nginx/sites-enabled/
+sudo rm /etc/nginx/sites-enabled/default
+sudo nginx -t
+sudo systemctl restart nginx
 ```
 
-### Step 2: Clone/Copy Project
+## SSL (Let's Encrypt)
 
 ```bash
-mkdir -p /var/www/yuhlez
-cd /var/www/yuhlez
-
-# Opsi A: dari Git
-git clone https://github.com/your-repo/yuhlez-laravel.git .
-
-# Opsi B: dari local (rsync)
-rsync -avz --exclude='.env' --exclude='node_modules' --exclude='vendor' \
-  ./ user@VPS_IP:/var/www/yuhlez/
+sudo certbot --nginx -d yourdomain.com -d www.yuhlez.com
 ```
 
-### Step 3: Setup Environment
+## Yang TIDAK Perlu
+- ❌ `npm install`
+- ❌ `npm run build`
+- ❌ `vite.config.js`
+- ❌ `package.json`
+- ❌ `node_modules/`
+- ❌ `public/build/`
 
+## Yang Sudah Tersedia (CDN)
+- ✅ Tailwind CSS → `cdn.tailwindcss.com`
+- ✅ Trix Editor → `unpkg.com/trix`
+- ✅ Chart.js → `cdn.jsdelivr.net`
+- ✅ Axios → `cdn.jsdelivr.net`
+- ✅ Custom CSS → `public/css/app.css`
+- ✅ Custom JS → `public/js/app.js`
+
+## Cek Status
 ```bash
-cp .env.example .env
-nano .env   # Edit semua nilai yang perlu diganti
-```
-
-**Yang WAJIB diganti di .env untuk VPS:**
-
-| Variable | Contoh |
-|----------|--------|
-| APP_ENV | production |
-| APP_DEBUG | false |
-| APP_URL | https://yourdomain.com |
-| DB_PASSWORD | password_yang_kuat |
-| GOOGLE_CLIENT_ID | dari Google Console |
-| GOOGLE_CLIENT_SECRET | dari Google Console |
-| MAIL_MAILER | smtp |
-| MAIL_HOST | smtp.gmail.com |
-| MAIL_USERNAME | email@gmail.com |
-| MAIL_PASSWORD | xxxx-xxxx-xxxx-xxxx |
-
-### Step 4: Build & Deploy
-
-```bash
-# Build images
-docker compose -f docker-compose.prod.yml up -d --build
-
-# Setup Laravel
-docker compose -f docker-compose.prod.yml exec app php artisan key:generate
-docker compose -f docker-compose.prod.yml exec app php artisan migrate --force
-docker compose -f docker-compose.prod.yml exec app php artisan db:seed --force
-docker compose -f docker-compose.prod.yml exec app php artisan storage:link
-docker compose -f docker-compose.prod.yml exec app php artisan config:cache
-docker compose -f docker-compose.prod.yml exec app php artisan route:cache
-docker compose -f docker-compose.prod.yml exec app php artisan view:cache
-```
-
-### Step 5: Setup SSL (Let's Encrypt)
-
-```bash
-# Install certbot di VPS host (bukan di Docker)
-apt install certbot -y
-
-# Dapatkan SSL certificate
-certbot certonly --standalone -d yourdomain.com -d www.yourdomain.com
-
-# Copy ke Docker volume
-docker compose -f docker-compose.prod.yml cp /etc/letsencrypt/live/yourdomain.com/fullchain.pem ssl_data:/fullchain.pem
-docker compose -f docker-compose.prod.yml cp /etc/letsencrypt/live/yourdomain.com/privkey.pem ssl_data:/privkey.pem
-
-# Reload nginx
-docker compose -f docker-compose.prod.yml exec nginx nginx -s reload
-
-# Auto-renewal (cron di VPS host)
-(crontab -l 2>/dev/null; echo "0 3 * * * certbot renew --quiet") | crontab -
-```
-
-### Step 6: Google OAuth untuk Production
-
-Di Google Console, tambahkan redirect URI production:
-```
-https://yourdomain.com/v1/auth/google/callback
-```
-
-### Step 7: Verifikasi
-
-```bash
-# Cek semua container berjalan
-docker compose -f docker-compose.prod.yml ps
-
-# Cek log
-docker compose -f docker-compose.prod.yml logs -f
-
-# Test dari luar
-curl -I https://yourdomain.com
-```
-
----
-
-## 👤 Default Accounts
-
-| Role | Email | Password |
-|------|-------|----------|
-| ROOT (Admin) | admin@yuhlez.com | 12345678 |
-
-> Akun COMPANY dan INTERN dibuat otomatis via Google OAuth Login.
-> Hanya akun ROOT yang bisa login dengan email/password.
-
----
-
-## 🏗️ Architecture
-
-```
-┌────────────────────────────────────────────────────────┐
-│                     VPS (Ubuntu)                       │
-│                                                        │
-│  ┌──────────────────────────────────────────────────┐  │
-│  │              Nginx (Port 80/443)                 │  │
-│  │           SSL Termination + Static Files         │  │
-│  └──────────────┬───────────────────────────────────┘  │
-│                 │                                      │
-│  ┌──────────────▼───────────────────────────────────┐  │
-│  │         Laravel App - PHP-FPM (Port 9000)        │  │
-│  │  ┌─────────┐ ┌──────────┐ ┌─────────────────┐   │  │
-│  │  │  Queue   │ │Scheduler │ │  File Storage   │   │  │
-│  │  │ Worker   │ │ (cron)   │ │ (public disk)   │   │  │
-│  │  └────┬─────┘ └────┬─────┘ └─────────────────┘   │  │
-│  └───────┼─────────────┼────────────────────────────┘  │
-│          │             │                               │
-│  ┌───────▼─────────────▼────────────────────────────┐  │
-│  │  ┌──────────────┐  ┌──────────────────────────┐  │  │
-│  │  │  MariaDB      │  │  Redis                    │  │  │
-│  │  │  (Port 3306)  │  │  (Cache + Queue + Session)│  │  │
-│  │  └──────────────┘  └──────────────────────────┘  │  │
-│  └──────────────────────────────────────────────────┘  │
-└────────────────────────────────────────────────────────┘
-```
-
----
-
-## 🔧 Troubleshooting
-
-### Database Connection Error
-
-```bash
-# Cek MySQL running
-docker compose -f docker-compose.prod.yml ps mysql
-
-# Cek log
-docker compose -f docker-compose.prod.yml logs mysql
-
-# Restart
-docker compose -f docker-compose.prod.yml restart mysql
-```
-
-### Permission Error
-
-```bash
-docker compose -f docker-compose.prod.yml exec app \
-  chown -R www-data:www-data storage bootstrap/cache
-```
-
-### Queue Tidak Jalan
-
-```bash
-# Cek status queue worker
-docker compose -f docker-compose.prod.yml ps queue
-
-# Restart
-docker compose -f docker-compose.prod.yml restart queue
-
-# Cek log
-docker compose -f docker-compose.prod.yml logs -f queue
-```
-
-### Email Tidak Terkirim
-
-1. Pastikan MAIL_MAILER=smtp (bukan log)
-2. Pastikan SMTP credentials benar di .env
-3. Cek log: `tail -f storage/logs/laravel.log`
-4. Jalankan queue worker: `php artisan queue:work`
-
-### Google OAuth Error
-
-1. Pastikan redirect URI sesuai:
-   - Local: `http://127.0.0.1:8000/v1/auth/google/callback`
-   - VPS: `https://yourdomain.com/v1/auth/google/callback`
-2. Pastikan GOOGLE_CLIENT_ID dan GOOGLE_CLIENT_SECRET benar
-3. Cek Google Console → OAuth consent screen sudah published
-
----
-
-## 💾 Backup
-
-```bash
-# Backup database
-docker compose -f docker-compose.prod.yml exec mysql \
-  mysqldump -u root -p yuhlez > backup_$(date +%Y%m%d_%H%M).sql
-
-# Backup storage (file uploads, CV, sertifikat)
-tar -czf storage_backup_$(date +%Y%m%d).tar.gz storage/app/public/
-
-# Restore database
-docker compose -f docker-compose.prod.yml exec -T mysql \
-  mysql -u root -pDB_PASSWORD yuhlez < backup.sql
-```
-
----
-
-## 📊 Useful Commands
-
-```bash
-# Jalankan artisan
-docker compose -f docker-compose.prod.yml exec app php artisan [command]
-
-# Common commands:
-php artisan migrate              # Jalankan migrasi
-php artisan migrate:rollback     # Rollback migrasi terakhir
-php artisan db:seed              # Seed database
-php artisan cache:clear          # Clear cache
-php artisan config:cache         # Cache config
-php artisan route:cache          # Cache routes
-php artisan view:cache           # Cache views
-php artisan optimize:clear       # Clear semua cache
-php artisan queue:work           # Jalankan queue worker
-php artisan queue:restart        # Restart queue worker
-
-# Logs
+php artisan route:list
+php artisan test
 tail -f storage/logs/laravel.log
 ```
