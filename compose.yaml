@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: yuhlez-app
+    volumes:
+      - .:/var/www/html
+      - /var/www/html/vendor 
+    ports:
+      - "8000:80"
+    depends_on:
+      - db
+
+  db:
+    image: mariadb:10.11
+    container_name: yuhlez-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: yuhlez
+    ports:
+      - "3306:3306"
+    volumes:
+      - yuhlez_db_data:/var/lib/mysql
+
+volumes:
+  yuhlez_db_data:
